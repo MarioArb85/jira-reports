@@ -1,0 +1,164 @@
+.status-table-container {
+  display: block;
+  box-sizing: border-box;
+  margin: 30px auto;
+  width: 100%;
+  height: calc(100% - 65px - 65px);
+  padding: 0 30px;
+}
+
+.data-container {
+	display: block;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.title {
+	display: block;
+	box-sizing: border-box;
+	font-size: 20px;
+	cursor: default;
+	color: #424242;
+	margin-bottom: 25px;
+	height: 30px;
+}
+
+.actions-container {
+	display: flex;
+	justify-content: space-between;
+	height: 65px;
+}
+
+.filter-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.filter-container .mat-form-field {
+	box-sizing: border-box; 
+	width: 500px; 
+	margin-right: 50px;
+}
+
+.output-container {
+	display: block;
+	text-align: right;
+}
+
+.output-label {
+	display: block;
+	color: #9E9E9E;
+	font-size: 14px;
+	margin-bottom: 10px;
+}
+
+.radio-group {
+  display: flex;
+  justify-content: flex-end; 
+  align-items: center;
+  color: #424242;
+  font-size: 14px;
+}
+
+.radio-button:not(:last-child) {
+  margin-right: 15px;
+}
+
+.error-message {
+	display: inline-block;
+	box-sizing: border-box;
+	margin-top: 20px;
+	width: 100%;
+	text-align: center;
+	font-size: 18px;
+	cursor: default;
+	color: #424242;
+}
+
+.link {
+	font-size: 24px;
+	cursor: pointer;
+	font-weight: 400;
+}
+
+.link:hover {
+	color: #757575;
+}
+
+.table-container {
+	display: block;
+	overflow: auto;
+  height: calc(100% - 55px - 65px - 50px);
+}
+
+.mat-paginator {
+	height: 50px;
+}
+
+.mat-table-sticky:nth-child(3) {
+  border-right: 1px solid #e0e0e0;
+}
+
+.mat-footer-row,
+.mat-header-row,
+.mat-row {
+  display: inline-flex;
+  min-width: 100%;
+}
+
+th.mat-header-cell {
+  padding: 20px 10px 0 10px !important;
+}
+
+td.mat-cell {
+	padding: 15px 10px 0 10px !important;
+	white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+th.mat-column-key,
+td.mat-column-key {
+  width: 100px;
+}
+
+th.mat-column-link,
+td.mat-column-link {
+  width: 50px;
+}
+
+th.mat-column-title,
+td.mat-column-title {
+  width: 400px;
+}
+
+th.mat-column-project,
+td.mat-column-project {
+  width: 150px;
+}
+
+th.mat-column-issueType,
+td.mat-column-issueType {
+  width: 100px;
+}
+
+th.mat-column-status,
+td.mat-column-status {
+  width: 150px;
+}
+
+th.mat-column-resolution,
+td.mat-column-resolution {
+  width: 100px;
+}
+
+th.cell-small,
+td.cell-small {
+	width: 125px;
+}
+
+th.cell-long,
+td.cell-long {
+	width: 160px;
+}

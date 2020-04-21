@@ -1,11 +1,18 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    <!-- {{ title }} -->
-  </h1>
-</div>
-<!-- <h2></h2>
-<app-search-bar></app-search-bar> 
-<app-chart-area></app-chart-area>-->
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <span>Jira issues dashboard</span>
+    <span class="example-spacer"></span>
+    <button mat-button routerLink="/jira-query">Jira query</button>
+    <button mat-button routerLink="/status-list">Status list</button>
+    <button mat-button [matMenuTriggerFor]="chartsMenu">Charts</button>
+	<mat-menu #chartsMenu="matMenu">
+	  <button routerLink="/status-bar-chart" mat-menu-item>Status bar chart</button>
+	  <button routerLink="/status-table" mat-menu-item>Status table</button>
+	  <button mat-menu-item disabled>Lead time</button>
+	  <button mat-menu-item disabled>Cycle Time</button>
+	  <button routerLink="/export-data" mat-menu-item>Export data</button>
+	</mat-menu>
+  </mat-toolbar-row>
+</mat-toolbar>
 
 <router-outlet></router-outlet>

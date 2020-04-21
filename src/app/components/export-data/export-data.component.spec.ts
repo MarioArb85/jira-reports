@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ChartAreaComponent } from './chart-area.component';
+import { ExportDataComponent } from './export-data.component';
 
-describe('ChartAreaComponent', () => {
-  let component: ChartAreaComponent;
-  let fixture: ComponentFixture<ChartAreaComponent>;
+describe('ExportDataComponent', () => {
+  let component: ExportDataComponent;
+  let fixture: ComponentFixture<ExportDataComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ChartAreaComponent ]
+      declarations: [ ExportDataComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ChartAreaComponent);
+    fixture = TestBed.createComponent(ExportDataComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,0 +1,43 @@
+<div class="export-data-container">
+	<div class="data-container" *ngIf="datasource; else noData">
+		<div class="title">
+			<span>Export data to CSV</span>
+		</div>
+	  <div class="actions-container">
+	    <div class="csv-file-container">
+		    <mat-form-field>
+		      <mat-label>Csv file name</mat-label>
+		      <input matInput placeholder="My project" [(ngModel)]="fileName" (keyup.enter)="downloadCsv(jiraResults, fileName)">
+		    </mat-form-field>  
+		    <button
+		      mat-flat-button color="primary" 
+		      (click)="downloadCsv(jiraResults, fileName)" 
+		      [disabled]="!fileName">
+		      Download csv file
+		    </button>
+	    </div>
+    	<div class="output-container">
+		    <label class="output-label" id="output-type">Output</label>
+		    <mat-radio-group
+		      aria-labelledby="output-type"
+		      class="radio-group"
+		      [(ngModel)]="outputType"
+		      (ngModelChange)="updateOutput()">
+		      <mat-radio-button class="radio-button" *ngFor="let output of outputList" [value]="output.value">
+		        {{output.label}}
+		      </mat-radio-button>
+		    </mat-radio-group>
+	  	</div>
+	  </div>
+		<textarea class="csvPreview" wrap="off" readonly>
+	      {{ jiraResults }}
+		</textarea>
+	</div>
+
+	<ng-template #noData>
+		<div class="error-message">
+		  <p>There is no data retrieved. Please check your JIRA query.</p>
+		  <p class="link" routerLink="/jira-query">Take me there</p>
+		</div>
+	</ng-template>
+</div>

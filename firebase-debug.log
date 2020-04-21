@@ -1,0 +1,25 @@
+[debug] [2020-03-18T10:52:57.113Z] ----------------------------------------------------------------------
+[debug] [2020-03-18T10:52:57.115Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\arbesum\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2020-03-18T10:52:57.115Z] CLI Version:   7.15.1
+[debug] [2020-03-18T10:52:57.115Z] Platform:      win32
+[debug] [2020-03-18T10:52:57.116Z] Node Version:  v12.16.0
+[debug] [2020-03-18T10:52:57.123Z] Time:          Wed Mar 18 2020 11:52:57 GMT+0100 (Central European Standard Time)
+[debug] [2020-03-18T10:52:57.123Z] ----------------------------------------------------------------------
+[debug] [2020-03-18T10:52:57.123Z] 
+[debug] [2020-03-18T10:52:57.175Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-03-18T10:52:57.178Z] > authorizing via signed-in user
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\arbesum\Documents\Code\jira-reports
+
+Before we get started, keep in mind:
+
+  * You are initializing in an existing Firebase project directory
+

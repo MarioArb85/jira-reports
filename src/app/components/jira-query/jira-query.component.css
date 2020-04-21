@@ -1,0 +1,48 @@
+.jira-query-container{
+	margin: 50px auto;
+	max-width: 1100px;
+}
+
+.query-field {
+	display: block;
+	box-sizing: border-box;
+	width: 100%;
+}
+
+.query-field .mat-form-field {
+	width: 100%;	
+}
+
+.query-button {
+	display: block;
+	box-sizing: border-box;
+	width: 150px;
+	height: 35px;
+	margin: 10px auto;
+}
+
+.query-message {
+	display: block;
+	margin: 50px auto;
+	text-align: center;
+}
+
+.query-message .mat-icon {
+	font-size: 100px;
+	height: 100px;
+	width: 100px;
+}
+
+.query-ok .mat-icon,
+.query-ok .message-text {
+	color: #00C853;
+}
+
+.query-ko .mat-icon,
+.query-ko .message-text {
+	color: #D50000;
+}
+
+.message-bold{
+	font-weight: 500;
+}

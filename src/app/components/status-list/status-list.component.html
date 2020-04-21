@@ -1,0 +1,49 @@
+<div class="status-list-container">
+	<div *ngIf="usedStatus.length; else noData">
+		<div class="title">
+			<span>Status list</span>
+		</div>
+		<div class="subt-title">
+			<span>Drag and drop to reorder</span>
+		</div>
+		<div class="drag-and-drop-container">
+			<div class="list-container">
+				<span class="list-title">Used Status</span>
+				<div
+				  id="cdk-drop-list-used"
+				  cdkDropList
+				  #firstList="cdkDropList"
+				  [cdkDropListData]="usedStatus"
+				  [cdkDropListConnectedTo]="[secondList]"
+				  class="list"
+				  (cdkDropListDropped)="drop($event)">
+				  <div *ngFor="let status of usedStatus" class="box" cdkDrag>
+				    {{ status }}
+				  </div>
+				</div>
+			</div>
+			<div class="list-container">
+				<span class="list-title">Not used Status</span>
+				<div
+				  id="cdk-drop-list-not-used"
+				  cdkDropList
+				  #secondList="cdkDropList"
+				  [cdkDropListData]="notUsedStatus"
+				  [cdkDropListConnectedTo]="[firstList]"
+				  class="list"
+				  (cdkDropListDropped)="drop($event)">
+				  <div *ngFor="let status of notUsedStatus" class="box" cdkDrag>
+				    {{ status }}
+				  </div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<ng-template #noData>
+		<div class="error-message">
+		  <p>There is no data retrieved. Please check your JIRA query.</p>
+		  <p class="link" routerLink="/jira-query">Take me there</p>
+		</div>
+	</ng-template>
+</div>

@@ -1,0 +1,15 @@
+<div class="status-bar-chart-container" id="viewContainer">
+	<div *ngIf="datasource; else noData">
+		<div class="title">
+			<span>Status time by JIRA key</span>
+		</div>
+    <google-chart [data]="chartData"></google-chart>
+	</div>
+
+	<ng-template #noData>
+		<div class="error-message">
+		  <p>There is no data retrieved. Please check your JIRA query.</p>
+		  <p class="link" routerLink="/jira-query">Take me there</p>
+		</div>
+	</ng-template>
+</div>

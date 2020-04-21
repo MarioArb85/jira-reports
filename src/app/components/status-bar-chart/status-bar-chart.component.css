@@ -1,0 +1,38 @@
+.status-bar-chart-container {
+	display: inline-block;
+	box-sizing: border-box;
+	margin: 30px auto;
+	width: 100%;
+	height: calc(100% - 65px - 65px);
+	padding: 0 30px;
+}
+
+.title {
+	display: inline-block;
+	box-sizing: border-box;
+	font-size: 20px;
+	cursor: default;
+	color: #424242;
+	margin-bottom: 25px;
+}
+
+.error-message {
+	display: inline-block;
+	box-sizing: border-box;
+	margin-top: 20px;
+	width: 100%;
+	text-align: center;
+	font-size: 18px;
+	cursor: default;
+	color: #424242;
+}
+
+.link {
+	font-size: 24px;
+	cursor: pointer;
+	font-weight: 400;
+}
+
+.link:hover {
+	color: #757575;
+}
