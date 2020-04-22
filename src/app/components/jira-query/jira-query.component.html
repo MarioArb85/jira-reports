@@ -11,33 +11,63 @@
 		    <mat-label>Query name</mat-label>
 		    <input matInput placeholder="Project XX sprint YY" [(ngModel)]="queryName" (keyup.enter)="saveQuery(queryName, queryString)">
 		  </mat-form-field>
-			<button 
-				class="query-button" 
-				mat-flat-button color="accent" 
+			<button
+				mat-flat-button
+				[ngClass]="{'disabled': !queryName || !queryString}"
 				(click)="saveQuery(queryName, queryString)"
-				[disabled]="!queryName">
+				[disabled]="!queryName || !queryString">
 		  	<mat-icon>save</mat-icon>
 		  	Save query
 			</button>	
 		</div>
-		<button class="query-button" mat-flat-button color="primary" (click)="getDataFromJIRA(queryString)">
+		<button 
+			class="query-button"
+			mat-flat-button
+			color="primary"
+			(click)="getDataFromJIRA(queryString)"
+			[disabled]="!queryString">
 	  		<mat-icon>search</mat-icon>
-	  		Search!
+	  		Search
 		</button>
 	</div>
-	<div class="query-message query-ok" *ngIf="dataRetrievedMessage">
-		<mat-icon>done_outline</mat-icon>
-		<p class="message-text">Connection established</p>
-		<p class="message-text message-bold">{{dataRetrievedMessage}}</p>
+	<div class="query-container">
+		<div class="query-message query-ok" *ngIf="dataRetrievedMessage">
+			<mat-icon>done_outline</mat-icon>
+			<p class="message-text">Connection established</p>
+			<p class="message-text message-bold">{{dataRetrievedMessage}}</p>
+		</div>
+		
+		<div class="query-message query-ko" *ngIf="errorMessage">
+			<mat-icon>error_outline</mat-icon>
+			<p class="message-text">Connection refused</p>
+			<p class="message-text message-bold">{{errorMessage}}</p>
+		</div>		
 	</div>
-	
-	<div class="query-message query-ko" *ngIf="errorMessage">
-		<mat-icon>error_outline</mat-icon>
-		<p class="message-text">Connection refused</p>
-		<p class="message-text message-bold">{{errorMessage}}</p>
+	<div class="jira-queries-container">
+		<span class="jira-queries-title">Stored Jira Queries</span>
+		<div class="jira-queries">
+			<div class="jira-queries-table" *ngIf="jiraQueries.length > 0; else noJiraQueries">
+				<div class="jira-queries-row" *ngFor="let jiraQuery of jiraQueries">
+					<div class="table-information">
+						<span class="table-name">{{jiraQuery.name}}</span>
+						<span class="table-query">{{jiraQuery.query}}</span>
+					</div>
+					<div class="table-actions">
+						<button mat-fab (click)="deleteQuery(jiraQuery.id)">
+		  				<mat-icon>delete</mat-icon>
+						</button>
+						<button mat-fab color="primary" (click)="getDataFromJIRA(jiraQuery.query)">
+		  				<mat-icon>search</mat-icon>
+						</button>
+					</div>
+				</div>
+			</div>
+			<ng-template #noJiraQueries>
+				<div class="jira-queries-no-data">
+				  <span>There is not any stored Jira query yet.</span>
+				</div>
+			</ng-template>
+		</div>
 	</div>
-
-	
-
 	<app-loader></app-loader>
 </div>

@@ -17,8 +17,10 @@ import { SharedService } from './services/shared.service';
 
 import { LoaderInterceptor } from './interceptors/loader.interceptor';
 
-import { ExportDataComponent, } from './components/export-data/export-data.component';
+import { ConfirmDialogComponent } from './components/shared/confirm-dialog/confirm-dialog.component';
 import { LoaderComponent } from './components/shared/loader/loader.component';
+
+import { ExportDataComponent, } from './components/export-data/export-data.component';
 import { JiraQueryComponent } from './components/jira-query/jira-query.component';
 import { StatusBarChartComponent } from "./components/status-bar-chart/status-bar-chart.component";
 import { StatusListComponent } from './components/status-list/status-list.component';
@@ -29,6 +31,7 @@ import { Ng2GoogleChartsModule } from "ng2-google-charts";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
@@ -53,6 +56,7 @@ const appRoutes: Routes = [
 @NgModule({
   declarations: [    
     AppComponent,
+    ConfirmDialogComponent,
     ExportDataComponent,
     JiraQueryComponent,
     LoaderComponent,
@@ -73,6 +77,7 @@ const appRoutes: Routes = [
     BrowserAnimationsModule,
     DragDropModule,
     MatButtonModule,
+    MatDialogModule,
     MatIconModule,
     MatInputModule,
     MatMenuModule,
@@ -94,6 +99,9 @@ const appRoutes: Routes = [
       useClass: LoaderInterceptor,
       multi: true
     }
+  ],
+  entryComponents: [
+    ConfirmDialogComponent
   ],
   bootstrap: [AppComponent]
 })

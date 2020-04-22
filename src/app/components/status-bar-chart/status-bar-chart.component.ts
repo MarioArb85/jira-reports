@@ -33,7 +33,6 @@ export class StatusBarChartComponent implements OnInit, OnDestroy {
     });
 
     if (this.datasource) {
-      console.log(this.datasource);
       this.chartData.options = this.getChartOptions();
       this.chartData.dataTable = this.parseSource();
     }

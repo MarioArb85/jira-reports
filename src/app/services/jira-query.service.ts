@@ -18,7 +18,7 @@ export class JiraQueryService {
   	}
   }
 
-  public addJiraQuery(name: string, query: string) {
+  public addJiraQuery(name: string, query: string): void {
   	let newJiraQuery = new JiraQuery(this.nextId, name, query);
   	let jiraQueries = this.getJiraQueries();
   	jiraQueries.push(newJiraQuery);
@@ -29,7 +29,7 @@ export class JiraQueryService {
 
   public getJiraQueries(): JiraQuery[] {
   	let localStorageItem = JSON.parse(localStorage.getItem('jiraQueries'));
-  	return localStorageItem === null ? [] : localStorage.jiraQueries;
+  	return localStorageItem === null ? [] : localStorageItem.jiraQueries;
   }
 
   public removeJiraQuery(id: number): void {

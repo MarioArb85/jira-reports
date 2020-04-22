@@ -3,6 +3,11 @@ import { SharedService } from "../../services/shared.service";
 import { DataService } from "../../services/data-service.service";
 import { JiraQueryService } from "../../services/jira-query.service";
 
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
+
+import { JiraQuery } from '../../classes/jiraQuery';
+
 import { Subscription  } from 'rxjs';
 
 @Component({
@@ -17,15 +22,18 @@ export class JiraQueryComponent implements OnInit, OnDestroy {
 	queryString: string;
 	errorMessage: string;
 	dataRetrievedMessage: string;
+  queryName: string;
+  jiraQueries: JiraQuery[];
 
   constructor(
     private sharedService: SharedService, 
     private dataService: DataService,
-    private jiraQueryService: JiraQueryService) { }
+    private jiraQueryService: JiraQueryService,
+    public dialog: MatDialog) { }
 
   ngOnInit() {
   	let dataRetrieved:[];
-  	this.queryString = 'project = OPREP AND fixVersion in ("OPS Reports 1.2", "OPS Reports 1.3", "OPS Reports 1.4", "OPS Reports 1.5")';
+    this.jiraQueries = this.jiraQueryService.getJiraQueries();
   	
   	this.retrievedDataSubscription = this.sharedService.sharedRetrievedData.subscribe(jiraData => {
   		dataRetrieved = jiraData;
@@ -51,10 +59,10 @@ export class JiraQueryComponent implements OnInit, OnDestroy {
   	}
   }
 
-  getDataFromJIRA(querString: string) {
+  getDataFromJIRA(queryString: string) {
   	this.dataRetrievedMessage, this.errorMessage = null;
 
-    this.retrievedgetDaysPerStatus = this.dataService.getDaysPerStatus(querString).subscribe(jiraData => {
+    this.retrievedgetDaysPerStatus = this.dataService.getDaysPerStatus(queryString).subscribe(jiraData => {
       this.dataRetrievedMessage = `${jiraData.issues.length} issues retrieved.`
       this.errorMessage = null;
 
@@ -137,12 +145,6 @@ export class JiraQueryComponent implements OnInit, OnDestroy {
       
       statusHistory.push(sh);
 
-      console.log('***********************');
-      console.log(status);
-      console.log(sh);
-      console.log(sh.transitionDurationHours);
-      console.log(sh.transitionDurationDays);
-
       // Remove it?
 /*
       if (i === filteredStatusHistory.length - 1) {
@@ -188,5 +190,30 @@ export class JiraQueryComponent implements OnInit, OnDestroy {
     });
 
     return statusList;
+  }
+
+  saveQuery(name: string, query: string): void {
+    this.jiraQueryService.addJiraQuery(name, query);
+    this.jiraQueries = this.jiraQueryService.getJiraQueries();
+    this.queryName = null;
+  }
+
+  deleteQuery(queryId: number): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Are you sure want to delete this query?',
+        buttonText: {
+          ok: 'Delete',
+          cancel: 'Cancel'
+        }
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.jiraQueryService.removeJiraQuery(queryId);
+        this.jiraQueries = this.jiraQueryService.getJiraQueries();
+      }
+    });
   }
 }
