@@ -11,6 +11,9 @@ export class SharedService {
   private requestErrorMessage = new BehaviorSubject(null);
   sharedRequestErrorMessage = this.requestErrorMessage.asObservable();
 
+  private requestErrorList = new BehaviorSubject(null);
+  sharedRequestErrorList = this.requestErrorList.asObservable();
+
   private statusInUse = new BehaviorSubject(null);
   sharedStatusInUse = this.statusInUse.asObservable();
 
@@ -25,6 +28,10 @@ export class SharedService {
 
   setRequestErrorMessage(errorMessage: string) {
     this.requestErrorMessage.next(errorMessage);
+  }
+
+  setRequestErrorList(errorList: string[]) {
+    this.requestErrorList.next(errorList);
   }
 
   setStatusInUse(statusList: any) {

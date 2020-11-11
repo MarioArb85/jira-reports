@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SharedService } from "../../services/shared.service";
 import { DataService } from "../../services/data-service.service";
 import { JiraQueryService } from "../../services/jira-query.service";
+import { ConstantsService } from '../../services/constants.service';
 
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
@@ -18,18 +19,24 @@ import { Subscription  } from 'rxjs';
 export class JiraQueryComponent implements OnInit, OnDestroy {
 	retrievedDataSubscription: Subscription;
 	retrievedRequestErrorMessage: Subscription;
+  retrievedRequestErrorList: Subscription;
 	retrievedgetDaysPerStatus: Subscription;
 	queryString: string;
 	errorMessage: string;
+  errorList: string[];
 	dataRetrievedMessage: string;
   queryName: string;
   jiraQueries: JiraQuery[];
+  beginingOfWorkingHours = this._constant.startWorkingHours;
+  endOfWorkingHours = this._constant.endWorkingHours;
+  dayWorkingHours = this._constant.workingHours;
 
   constructor(
     private sharedService: SharedService, 
     private dataService: DataService,
     private jiraQueryService: JiraQueryService,
-    public dialog: MatDialog) { }
+    public dialog: MatDialog,
+    private _constant: ConstantsService) { }
 
   ngOnInit() {
   	let dataRetrieved:[];
@@ -44,8 +51,11 @@ export class JiraQueryComponent implements OnInit, OnDestroy {
   		this.dataRetrievedMessage = `${dataRetrieved.length} issues retrieved`
 		} else {
 			this.retrievedRequestErrorMessage = this.sharedService.sharedRequestErrorMessage.subscribe(errorMessage => {
-				this.errorMessage = (errorMessage) ? errorMessage : null
+				this.errorMessage = (errorMessage) ? errorMessage : null;
 			});
+      this.retrievedRequestErrorList =  this.sharedService.sharedRequestErrorList.subscribe(errorList => {
+        this.errorList = (errorList) ? errorList : []
+      });
 		}
   }
 
@@ -54,6 +64,9 @@ export class JiraQueryComponent implements OnInit, OnDestroy {
   	if (this.retrievedRequestErrorMessage) {
   		this.retrievedRequestErrorMessage.unsubscribe();
   	}
+    if (this.retrievedRequestErrorList) {
+      this.retrievedRequestErrorList.unsubscribe();
+    }
   	if (this.retrievedgetDaysPerStatus) {
   		this.retrievedgetDaysPerStatus.unsubscribe();
   	}
@@ -73,8 +86,10 @@ export class JiraQueryComponent implements OnInit, OnDestroy {
       this.sharedService.setStatusInUse(statusList);
     }, errorMessage => {
     	this.dataRetrievedMessage = null;
-      this.errorMessage = errorMessage;
-      this.sharedService.setRequestErrorMessage(errorMessage);
+      this.errorMessage = errorMessage.message;
+      this.errorList = JSON.parse(errorMessage.error).body.errorMessages || [];
+      this.sharedService.setRequestErrorMessage(this.errorMessage);
+      this.sharedService.setRequestErrorList(this.errorList);
     });
   }
 

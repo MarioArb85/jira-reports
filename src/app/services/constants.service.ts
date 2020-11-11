@@ -7,6 +7,10 @@ export class ConstantsService {
 
 	constructor() { }
 
-  readonly apiUrl: string = 'https://jira.ryanair.com:8443/rest/api/2/';
-  readonly appUrl: string = 'https://jira.ryanair.com/browse/';
+	readonly apiUrl: string = 'API_URL';
+	// readonly apiUrl: string = 'https://jira-issues-connector.herokuapp.com/api/';
+	readonly appUrl: string = 'APP_URL';
+	readonly startWorkingHours: number = 9;
+	readonly endWorkingHours: number = 17;
+	readonly workingHours: number = 8;
 }

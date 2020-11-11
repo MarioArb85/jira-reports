@@ -41,7 +41,8 @@
 			<mat-icon>error_outline</mat-icon>
 			<p class="message-text">Connection refused</p>
 			<p class="message-text message-bold">{{errorMessage}}</p>
-		</div>		
+			<p class="message-text message-bold" *ngFor="let error of errorList">{{error}}</p>
+		</div>
 	</div>
 	<div class="jira-queries-container">
 		<span class="jira-queries-title">Stored Jira Queries</span>
