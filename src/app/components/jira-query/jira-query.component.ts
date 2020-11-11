@@ -110,11 +110,35 @@ export class JiraQueryComponent implements OnInit, OnDestroy {
         resolution: (issue.fields.resolution)
           ? issue.fields.resolution.name
           : null,
-        statusHistory: this.getStatusHIstory(issue)
+        statusHistory: this.getStatusHIstory(issue),
+        sprints: this.getSprints(issue)
   		});
   	});
 
   	return fomattedJiraData;
+  }
+
+  getSprints(jiraIssue: any) {
+    let sprintsList = [];
+
+    if (jiraIssue.fields.customfield_10005) {
+      jiraIssue.fields.customfield_10005.forEach(sprint => {
+        let parseSprintData = sprint.match(/\[(.*)\]/)[1].split(',').reduce((acc, pair) => {
+          const [key, value] = pair.split('='); 
+          acc[key] = value; 
+          return acc;
+        }, {});
+        sprintsList.push({
+          name: parseSprintData.name,
+          goal: parseSprintData.goal,
+          state: parseSprintData.state,
+          startDate: parseSprintData.startDate,
+          endDate: parseSprintData.endDate,
+          completeDate: parseSprintData.completeDate
+        });
+      });
+    }
+    return sprintsList;
   }
 
   getStatusHIstory(jiraIssue: any) {
@@ -126,12 +150,16 @@ export class JiraQueryComponent implements OnInit, OnDestroy {
         let statusHistoryItem = history.items.filter (historyItem => historyItem.field === "status");
         if (statusHistoryItem.length > 0) {
           statusHistoryItem.created = history.created;
-          filteredStatusHistory.push(statusHistoryItem);
+          filteredStatusHistory.push({
+            fromString: statusHistoryItem[0].fromString,
+            toString: statusHistoryItem[0].toString,
+            created: history.created
+          });
         }
       });
     }
     
-    filteredStatusHistory.forEach(function(status, i) {
+    filteredStatusHistory.forEach(status => {
 			const fromDt =
         statusHistory.length > 0
           ? statusHistory[statusHistory.length - 1].toDateTime
@@ -142,55 +170,86 @@ export class JiraQueryComponent implements OnInit, OnDestroy {
         toDateTime: status.created,
         transitionDurationHours: 0,
         transitionDurationDays: 0,
-        from: (status[0]["fromString"]) ? status[0]["fromString"] : null,
-        to: (status[0]["toString"]) ? status[0]["toString"] : null,
+        from: (status.fromString) ? status.fromString : null,
+        to: (status.toString) ? status.toString : null,
       };
 
-      sh.transitionDurationHours =
-        Math.abs(
-          new Date(sh.toDateTime).getTime() -
-          new Date(sh.fromDateTime).getTime()
-        ) / (1000 * 60 * 60);
+      sh.transitionDurationHours = this.getHoursNoWeekends(sh.toDateTime, sh.fromDateTime);
+      sh.transitionDurationDays = sh.transitionDurationHours / this.dayWorkingHours;
 
-      sh.transitionDurationDays =
-        Math.abs(
-          new Date(sh.toDateTime).getTime() -
-          new Date(sh.fromDateTime).getTime()
-        ) / (1000 * 60 * 60 * 24);
-      
       statusHistory.push(sh);
-
-      // Remove it?
-/*
-      if (i === filteredStatusHistory.length - 1) {
-        const shLast = {
-          fromDateTime: status.created,
-          toDateTime: Date.now(),
-          transitionDurationHours: 0,
-          transitionDurationDays: 0,
-          from: (status[0]["fromString"]) ? status[0]["fromString"] : '',
-          to: null
-        };
-        shLast.transitionDurationHours =
-          Math.abs(
-            new Date(shLast.toDateTime).getTime() -
-              new Date(shLast.fromDateTime).getTime()
-          ) /
-          (1000 * 60 * 60);
-        shLast.transitionDurationDays =
-          Math.abs(
-            new Date(shLast.toDateTime).getTime() -
-              new Date(shLast.fromDateTime).getTime()
-          ) / 86400000;
-
-        console.log(Date.now());
-        console.log(shLast);
-
-        statusHistory.push(shLast);
-      }
-*/
     });
     return statusHistory;
+  }
+
+  private getHoursNoWeekends(toDateTime, fromDateTime) {
+    //Generate new date for iteration. Set start working time to 8am
+    let iterateFromDate = new Date(fromDateTime);
+    // beginingOfWorkingHours - 1 to give some margin
+    iterateFromDate.setHours(this.beginingOfWorkingHours - 1);
+    iterateFromDate.setMinutes(0);
+    iterateFromDate.setSeconds(0);
+
+    let weekendHours = 0;
+    let workingHours = 0;
+    
+    //Check weekendDays
+    do {
+      if (iterateFromDate.getDay() !== 6 && iterateFromDate.getDay() !== 0) {
+        workingHours += this.getWorkingHours(iterateFromDate, toDateTime, fromDateTime);
+        //console.log('workingHours added: ' + this.getWorkingHours(iterateFromDate, toDateTime, fromDateTime));
+        //console.log('Total workingHours: ' + workingHours);
+      }
+
+      //Count number of holidays
+      /* TO DO*/
+
+      iterateFromDate.setDate(iterateFromDate.getDate() + 1);
+    } while ( iterateFromDate <= new Date(toDateTime))
+
+    return workingHours;
+  }
+
+  private getWorkingHours(iterateFromDate, toDateTime, fromDateTime) {
+    // Get MM/DD for comparations
+    let parseIterateFromDate =  new Date(iterateFromDate).getMonth() + '/' +  new Date(iterateFromDate).getDate();
+    let parseToDateTime =  new Date(toDateTime).getMonth() + '/' +  new Date(toDateTime).getDate();
+    let parseFromDateTime =  new Date(fromDateTime).getMonth() + '/' +  new Date(fromDateTime).getDate();
+
+    if(parseToDateTime === parseFromDateTime) {
+      return this.getTotalHours(toDateTime, fromDateTime);
+
+    } else if (parseFromDateTime === parseIterateFromDate) {
+      // First day of itearation
+
+      // Working hours 8h-18h
+      let endOfFirstDay = new Date(fromDateTime);
+      // endOfWorkingHours + 1 to give some margin
+      endOfFirstDay.setHours(this.endOfWorkingHours + 1);
+      endOfFirstDay.setMinutes(0);
+      endOfFirstDay.setSeconds(0);
+      return (new Date(fromDateTime) > new Date(endOfFirstDay)) ? 
+        0 :
+        this.getTotalHours(endOfFirstDay, fromDateTime);
+
+    } else if (parseToDateTime === parseIterateFromDate) {
+      // Last day of itearation
+      return (new Date(iterateFromDate) > new Date(toDateTime)) ? 
+        0 :
+        this.getTotalHours(toDateTime, iterateFromDate);
+    } else {
+      // Intermediate days of itearation
+      return this.dayWorkingHours;
+    }
+
+    return 0;
+  }
+
+  private getTotalHours(toDateTime, fromDateTime) {
+    return Math.abs(
+      new Date(toDateTime).getTime() -
+      new Date(fromDateTime).getTime()
+      ) / (1000 * 60 * 60);
   }
 
   private getStatus(jiraData: any) {
