@@ -15,38 +15,42 @@ export class DataService {
   constructor(private http: HttpClient, private _constant: ConstantsService) {}
 
   public getDaysPerStatus(query: string): Observable<any> {
+    const nodeURL = this.jiraUrl + 'get-jira-issues';
+    const sendParams = {
+      jql: query,
+      maxResults: 100,
+      expand: [
+        'changelog', 
+        'names'
+      ],
+      fields: [
+        'key',
+        'summary',
+        'created',
+        'updated',
+        'issuetype',
+        'project',
+        'customfield_10002',  // Story points
+        'customfield_10005',  //Sprints
+        'status',
+        'resolution'
+      ]
+    };
+
     // Mock data
     // return this.http.get('./assets/json/jiramock2.json');
 
-    return this.post(`${this.jiraUrl}search`, {
-      jql: query,
-      maxResults: 100,
-      expand: ["changelog", "names"]
-    });
+    return this.post(nodeURL, sendParams);
   }
 
   private post(url: string, body: any): Observable<any> {
     return this.http
-      .post(url, body, { headers: this.headers, withCredentials: true })
+      .post(url, body, { headers: this.headers})
       .pipe(map((response, any) => response))
       .pipe(catchError((error) => this.handleError(error)));
   }
 
   public handleError(error: any): Observable<string> {
-    return throwError(error.message || 'There was an error in the server');
+    return throwError(error);
   }
-
-/*
-  private username = 'username';
-  private pass = 'password';
-
-  private setAuth(username: string, pass: string) {
-    this.username = username;
-    this.pass = pass;
-    this.headers.append(
-      'Authorization',
-      'Basic ' + window.btoa(`${username}:${pass}`)
-    );
-  }
-*/
 }
