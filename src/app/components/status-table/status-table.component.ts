@@ -31,15 +31,15 @@ export class StatusTableComponent implements OnInit, OnDestroy {
   outputList: any[] = [
     {
       value: 'transitionDurationHours',
-      label: 'Time (h)'
+      label: 'Time (H)'
+    },
+    {
+      value: 'transitionDurationDays',
+      label: 'Time (D)'
     },
     {
       value: 'fromDateTime',
       label: 'Date (MM/DD/YYYY HH:mm:ss)'
-    },
-    {
-      value: 'all',
-      label: 'All'
     }
   ];
   tableHeaders: string[] = [];
@@ -88,16 +88,18 @@ export class StatusTableComponent implements OnInit, OnDestroy {
   	this.tableData.sortingDataAccessor = (data, header) => data[header];
 
     this.updateTableHeaders(jiraData, statusList);
-    this.jiraResults = this.parseJiraResults(this.tableHeadersLabels, this.tableData.data);
+    // this.jiraResults = this.parseJiraResults(this.tableHeadersLabels, this.tableData.data);
   }
 
   parseTableData(jiraData: any, output: string, statusList: string[]) {
     let tableInformation = [];
     let timeLabel = 'transitionDurationHours';
+    let timeDaysLabel = 'transitionDurationDays';
     let dateLabel = 'fromDateTime';
 
     jiraData.forEach(element => {
       let totalTime = 0;
+      let totalDays = 0;
       let newElement = {
         key: element.key,
         link: this.jiraUrl + element.key,
@@ -106,11 +108,13 @@ export class StatusTableComponent implements OnInit, OnDestroy {
         issueType: element.issuetype,
         status: element.status,
         resolution: element.resolution,
-        total: null
+        total: null,
+        totalDays: null
       };
 
       element.statusHistory.forEach(history => {
         let timeName = (history.from) ? history.from.replace(/ /g,'') + timeLabel.charAt(0).toUpperCase() + timeLabel.slice(1) : null;
+        let timeDaysName = (history.from) ? history.from.replace(/ /g,'') + timeDaysLabel.charAt(0).toUpperCase() + timeDaysLabel.slice(1) : null;
         let dateName = (history.from) ? history.from.replace(/ /g,'') + dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1) : null;
 
         newElement[dateName] = this.formatDate(history[dateLabel]);
@@ -122,13 +126,22 @@ export class StatusTableComponent implements OnInit, OnDestroy {
           newElement[timeName] = roundTime;
         }
 
+        let roundDays = Math.round(history[timeDaysLabel] * 100) / 100;
+        if (newElement[timeDaysName]) {
+          newElement[timeDaysName] += roundDays;
+        } else {
+          newElement[timeDaysName] = roundDays;
+        }
+
         if (statusList.indexOf(history.from) >= 0) {
           totalTime += roundTime;
+          totalDays += roundDays;
         }
       });
 
-      if (output === 'transitionDurationHours' || output === 'all') {
+      if (output === 'transitionDurationHours' || output === 'transitionDurationHours') {
         newElement.total = Math.round(totalTime * 100) / 100;
+        newElement.totalDays = Math.round(totalDays * 100) / 100;
       }
 
       tableInformation.push(newElement);
@@ -162,9 +175,10 @@ export class StatusTableComponent implements OnInit, OnDestroy {
     let headersList = this.headersBasicList.slice();
     let statusList = [];
     let timeLabel = 'transitionDurationHours';
+    let timeDaysLabel = 'transitionDurationDays';
     let dateLabel = 'fromDateTime';
 
-    if (output === 'transitionDurationHours' || output === 'all') {
+    if (output === 'transitionDurationHours' || output === 'transitionDurationDays') {
       headersList.push('total')
     }
 
@@ -174,15 +188,18 @@ export class StatusTableComponent implements OnInit, OnDestroy {
       		statusList.push(history.from);
 
       		let timeName = (history.from) ? history.from.replace(/ /g,'') + timeLabel.charAt(0).toUpperCase() + timeLabel.slice(1) : null;
+          let timeDaysName = (history.from) ? history.from.replace(/ /g,'') + timeDaysLabel.charAt(0).toUpperCase() + timeDaysLabel.slice(1) : null;
         	let dateName = (history.from) ? history.from.replace(/ /g,'') + dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1) : null;
 
         	if (output === 'transitionDurationHours') {
             headersList.push(timeName);
+          } else if(output === 'transitionDurationDays') {
+            headersList.push(timeDaysName);
           } else if(output === 'fromDateTime') {
         	  headersList.push(dateName);
-
           } else {
             headersList.push(timeName);
+            headersList.push(timeDaysName);
             headersList.push(dateName);
           }
         }
@@ -207,6 +224,7 @@ export class StatusTableComponent implements OnInit, OnDestroy {
     return headersList;
   }
 
+/*
   parseJiraResults(tableHeadersLabels: any[], tableData) {
     // let jiraResults = this.tableHeaders.join(',');
     let jiraResults = '';
@@ -234,6 +252,7 @@ export class StatusTableComponent implements OnInit, OnDestroy {
 
     return jiraResults;
   }
+*/
 
   generateLabels(jiraData: any, output: string) {
     let labels = {start: [], end:[]};
@@ -248,8 +267,19 @@ export class StatusTableComponent implements OnInit, OnDestroy {
               let timeName = history.from.replace(/ /g,'') + timeLabel.charAt(0).toUpperCase() + timeLabel.slice(1);
 
               labels.start.push({
-                label: history.from + ' (h)',
+                label: history.from + ' (H)',
                 value: timeName,
+                class: 'small'
+              });
+              break;
+
+            case 'transitionDurationDays':
+              let timeDaysLabel = 'transitionDurationDays';
+              let timeDaysName = history.from.replace(/ /g,'') + timeDaysLabel.charAt(0).toUpperCase() + timeDaysLabel.slice(1);
+
+              labels.start.push({
+                label: history.from + ' (D)',
+                value: timeDaysName,
                 class: 'small'
               });
               break;
@@ -274,7 +304,7 @@ export class StatusTableComponent implements OnInit, OnDestroy {
 
               // Labels to be added at the beginning of the final array
               labels.start.push({
-                label: history.from + ' (h)',
+                label: history.from + ' (H)',
                 value: timeNameAll,
                 class: 'small'
               });
@@ -293,10 +323,16 @@ export class StatusTableComponent implements OnInit, OnDestroy {
       });
     });
 
-    if (output === 'transitionDurationHours' || output === 'all') {
+    if (output === 'transitionDurationHours') {
       labels.start.unshift({
-        label: 'Total (h)',
+        label: 'Total (H)',
         value: 'total',
+        class: 'small'
+      });
+    } else if (output === 'transitionDurationDays') {
+      labels.start.unshift({
+        label: 'Total (D)',
+        value: 'totalDays',
         class: 'small'
       });
     }
@@ -311,6 +347,6 @@ export class StatusTableComponent implements OnInit, OnDestroy {
 
   updateOutput() {
     this.updateTableHeaders(this.datasource, this.statusInUse);
-    this.jiraResults = this.parseJiraResults(this.tableHeadersLabels, this.tableData.data);
+    // this.jiraResults = this.parseJiraResults(this.tableHeadersLabels, this.tableData.data);
   }
 }
