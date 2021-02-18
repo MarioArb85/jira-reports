@@ -88,7 +88,6 @@ export class StatusTableComponent implements OnInit, OnDestroy {
   	this.tableData.sortingDataAccessor = (data, header) => data[header];
 
     this.updateTableHeaders(jiraData, statusList);
-    // this.jiraResults = this.parseJiraResults(this.tableHeadersLabels, this.tableData.data);
   }
 
   parseTableData(jiraData: any, output: string, statusList: string[]) {
@@ -178,10 +177,6 @@ export class StatusTableComponent implements OnInit, OnDestroy {
     let timeDaysLabel = 'transitionDurationDays';
     let dateLabel = 'fromDateTime';
 
-    if (output === 'transitionDurationHours' || output === 'transitionDurationDays') {
-      headersList.push('total')
-    }
-
     jiraData.forEach(element => {
       element.statusHistory.forEach(history => {
       	if (statusList.indexOf(history.from) < 0 && currentStatus.indexOf(history.from) >= 0) {
@@ -223,36 +218,6 @@ export class StatusTableComponent implements OnInit, OnDestroy {
 
     return headersList;
   }
-
-/*
-  parseJiraResults(tableHeadersLabels: any[], tableData) {
-    // let jiraResults = this.tableHeaders.join(',');
-    let jiraResults = '';
-    let headerValues = [];
-    
-    tableHeadersLabels.forEach(headerLabel => {
-      //jiraResults += headerLabel.label + ',';
-      jiraResults += `${headerLabel.label},`;
-      headerValues.push(headerLabel.value);
-    });  
-
-    tableData.forEach(jiraDataRow => {
-      jiraResults += '\n';
-      headerValues.forEach(function(header, i) {
-        if (jiraDataRow[header] && typeof jiraDataRow[header] === 'string') {
-          // Remove commas
-          jiraDataRow[header] = (jiraDataRow[header].indexOf(',') != -1) ? 
-          	jiraDataRow[header].split(',').join('') : 
-          	jiraDataRow[header];
-        }
-        jiraResults += (i !== 0) ? ',' : '';
-        jiraResults += (jiraDataRow[header]) ? `${jiraDataRow[header]}` : '';
-      });
-    });
-
-    return jiraResults;
-  }
-*/
 
   generateLabels(jiraData: any, output: string) {
     let labels = {start: [], end:[]};
@@ -347,6 +312,5 @@ export class StatusTableComponent implements OnInit, OnDestroy {
 
   updateOutput() {
     this.updateTableHeaders(this.datasource, this.statusInUse);
-    // this.jiraResults = this.parseJiraResults(this.tableHeadersLabels, this.tableData.data);
   }
 }

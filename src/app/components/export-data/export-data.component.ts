@@ -69,7 +69,6 @@ export class ExportDataComponent implements OnInit, OnDestroy {
 
   setDataToExport(jiraData: any[], statusList: string[]) {
   	let parseData = this.parseTableData(jiraData, this.outputType, statusList);
-    this.headers = this.getHeaders(jiraData, statusList, this.outputType);
     this.headersLabels = this.getHeadersLabels(jiraData, statusList);
     this.jiraResults = this.parseJiraResults(this.headersLabels, parseData);
   }
@@ -148,27 +147,6 @@ export class ExportDataComponent implements OnInit, OnDestroy {
     });
 
     return formatter.format(formatDate);
-  }
-
-  getHeaders(jiraData: any, currentStatus: string[], output: string) {
-    let headersList = this.headersBasicList.slice();
-    let headerAllList = [];
-
-    if (output === 'transitionDurationHours' || output === 'transitionDurationDays') {
-      headersList.push('total')
-    }
-
-    jiraData.forEach(element => {
-      element.statusHistory.forEach(history => {
-        if (headersList.indexOf(history.from) < 0 && currentStatus.indexOf(history.from) >= 0) {
-          headersList.push(history.from);
-        }
-      });
-    });
-
-    headersList = headersList.concat(headerAllList);
-
-    return headersList;
   }
 
   getHeadersLabels(jiraData: any, currentStatus: string[]) {
@@ -307,7 +285,6 @@ export class ExportDataComponent implements OnInit, OnDestroy {
 
   updateOutput() {
     let parseData = this.parseTableData(this.datasource, this.outputType, this.statusInUse);
-    this.headers = this.getHeaders(this.datasource, this.statusInUse, this.outputType);
     this.headersLabels = this.getHeadersLabels(this.datasource, this.statusInUse);
     this.jiraResults = this.parseJiraResults(this.headersLabels, parseData);
   }
