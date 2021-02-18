@@ -8,7 +8,8 @@ export class ConstantsService {
 	constructor() { }
 
 	readonly apiUrl: string = 'API_URL';
-	// readonly apiUrl: string = 'https://jira-issues-connector.herokuapp.com/api/';
+	// Example: working locally with node API REST
+	// readonly apiUrl: string = 'http://localhost:5000/api/';
 	readonly appUrl: string = 'APP_URL';
 	readonly startWorkingHours: number = 9;
 	readonly endWorkingHours: number = 17;
