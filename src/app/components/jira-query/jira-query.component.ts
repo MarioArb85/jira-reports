@@ -145,7 +145,7 @@ export class JiraQueryComponent implements OnInit, OnDestroy {
     let filteredStatusHistory: Array<any> = [];
     let statusHistory: Array<any> = [];
 
-    if (jiraIssue.changelog && jiraIssue.changelog.histories) {
+    if (jiraIssue.changelog && jiraIssue.changelog.histories) {    
       jiraIssue.changelog.histories.forEach(history => {
         let statusHistoryItem = history.items.filter (historyItem => historyItem.field === "status");
         if (statusHistoryItem.length > 0) {
@@ -158,7 +158,7 @@ export class JiraQueryComponent implements OnInit, OnDestroy {
         }
       });
     }
-    
+
     filteredStatusHistory.forEach(status => {
 			const fromDt =
         statusHistory.length > 0
@@ -179,6 +179,24 @@ export class JiraQueryComponent implements OnInit, OnDestroy {
 
       statusHistory.push(sh);
     });
+
+    // Add last status
+    if (filteredStatusHistory.length > 0) {
+      let sh = {
+        fromDateTime: statusHistory[statusHistory.length - 1].toDateTime,
+        toDateTime: new Date(),
+        transitionDurationHours: 0,
+        transitionDurationDays: 0,
+        from: statusHistory[statusHistory.length - 1].to,
+        to: null,
+      };
+
+      sh.transitionDurationHours = this.getHoursNoWeekends(sh.toDateTime, sh.fromDateTime);
+      sh.transitionDurationDays = sh.transitionDurationHours / this.dayWorkingHours;
+
+      statusHistory.push(sh);
+    }
+
     return statusHistory;
   }
 
